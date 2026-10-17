@@ -10,6 +10,6 @@ Nothing to report on it: Every plugin looks for a specific risky construct - a s
   weak hash, an assert used as a guard. The program here performs one
   arithmetic formatting step and calls nothing.
 
-Contents: one minimal program per boundary family (py3.6, py3.7, py3.11, py3.13, py3.14). One class or one function, no branching, no duplication, no dependency, no dead export, no magic number. No manifest and no tool configuration, so nothing here is discovered as a project.
+Contents: one minimal program per boundary family (py3.7). One class or one function, no branching, no duplication, no dependency, no dead export, no magic number. No manifest and no tool configuration, so nothing here is discovered as a project.
 
 Expected: the tool runs and reports nothing.
