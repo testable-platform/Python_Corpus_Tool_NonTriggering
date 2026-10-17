@@ -141,7 +141,6 @@ python -c "from pricing_service import quote; print(quote('gold', 600, 'retail',
 
 ```
 python -m pytest -q   # pytest 9.1.1
-python "Tool Triggering (Synthetic Data)/full_check.py"   # cross-file consistency audit
 ```
 
 pytest is pinned at 9.1.1, which is its current latest
@@ -154,15 +153,6 @@ branch.
 
 ```
 python-corpus/  (PY_V313_UV_UV_MICRO)
-|-- .github/  (1 files)
-|-- language/  (2 files)
-|-- packages/  (23 files)
-|-- services/  (6 files)
-|-- tests/  (7 files)
-|-- Tool Clean (Synthetic Data)/  (1020 files)
-|-- Tool Invalid (Synthetic Data)/  (1186 files)
-|-- Tool Triggering (Synthetic Data)/  (76 files)
-|-- Tool Triggering (Tool Github Test data)/  (20671 files)
 |-- .editorconfig
 |-- .gitignore
 |-- .python-version
@@ -190,59 +180,6 @@ through argv and environment. A tool that scores the two architectures
 differently is telling you about its source model, not about the code.
 
 
-
-## Tool test-data folders
-
-Three sibling folders sit at the repo root, alongside this branch's own
-`Tool Triggering (Synthetic Data)/` (above).
-
-### `Tool Triggering (Tool Github Test data)/`
-Each of the 26 tool subfolders is that tool's own real upstream test suite,
-pulled as-is from its actual GitHub project -- not generated. `Radon/` is
-radon's own pytest suite; `pydriller/` is pydriller's own test suite;
-`settrace/` is CPython's own `Lib/test/test_sys_settrace.py` (tag v3.14.8),
-because `sys.settrace` is a CPython feature with no tool project of its own;
-`Opengrep/` is the real opengrep/semgrep test corpus (1,000+ files of rules,
-parsing fixtures and snapshots). `pymcdc` and `cognitive-ast` have no public
-upstream test suite, so they have no folder here. A correct run finds whatever
-that upstream project's own tests genuinely contain.
-
-### `Tool Clean (Synthetic Data)/`
-25 of the 28 tools each carry 5 generated fixture packages, one per Python
-interpreter (3.6, 3.7, 3.11, 3.13, 3.14), each a self-contained package
-(`pyproject.toml`, `src/<module>/`, `tests/`) under its own invented domain
-name -- engineered to be clean, so the tool should report zero findings:
-the **Tool Clean (100% pass)** condition. The remaining 3 tools
-(`diff-cover`, `dulwich`, `pydriller`) operate on git history rather than
-interpreter syntax, so each carries one real git repository's worth of
-history instead of 5 per-version copies -- restored from `_git-bundles/`
-via `restore-clean-git.ps1` rather than kept as a live `.git` folder, so a
-plain file copy never silently drops their content. `_generator/` holds the
-scripts that built every fixture.
-
-### `Tool Invalid (Synthetic Data)/`
-Same shape as Clean -- 25 tools x 5 Python-version fixtures, plus the same
-3 git-history tools -- but every fixture is engineered to make the tool
-flag or fail rather than pass: the **Tool Invalid** condition. `_git-bundles/`
-backs up each git-history tool's real history, with `restore-invalid-git.ps1`
-to rebuild it; `live_results.json` and this folder's own README/archive
-travel with it.
-
-## Tool entry points
-
-Every tool directory carries a `trigger.yaml` recording its pin, its declared
-floor, its measured status on this interpreter and what a working run should
-find. Run one tool directly, or all of them:
-
-```
-bash "Tool Triggering (Synthetic Data)/radon/run_radon.sh"
-python "Tool Triggering (Synthetic Data)/tool_integration.py" --run
-python "Tool Triggering (Synthetic Data)/tool_integration.py" --verify
-```
-
-`--run` distinguishes three outcomes: a tool that ran, a tool that skipped for
-a reason `dataset.json` already records, and a tool that skipped for a reason
-it does not. Only the third is a finding.
 
 ## Planted fixtures
 
@@ -297,9 +234,7 @@ the tools that are supposed to be dark**.
 <!-- tools-non-triggering -->
 ## Tools non triggering (Synthetic Data)
 
-A fifth per-branch data folder, beside `Tool Clean (Synthetic Data)`,
-`Tool Invalid (Synthetic Data)`, `Tool Triggering (Synthetic Data)` and
-`Tool Triggering (Tool Github Test data)`.
+One of five per-branch data folders in the original combined `testable-platform/python-corpus` repo -- this repo carries only this one.
 
 Clean makes each tool run and report nothing wrong. Invalid makes it run and
 report something. This folder holds data with nothing in it for any tool to
@@ -310,8 +245,7 @@ apart from *the scan never ran*.
 `Tools non triggering (Synthetic Data)/` holds 28 tool-named folders, matching the names in Clean
 and Invalid so the data sets line up name-for-name:
 
-* **16 tools read source**, so they get a minimal program per boundary
-  family (py3.6, py3.7, py3.11, py3.13, py3.14) -- one class or one function, no branching, no
+* **16 tools read source**, so they get its own minimal program, for py3.13 -- one class or one function, no branching, no
   duplication, no dependency, no dead export, no magic number.
 * **12 tools cannot be answered by a program** -- they read a lockfile,
   a coverage report, compiled bytecode or the commit history -- so they carry
