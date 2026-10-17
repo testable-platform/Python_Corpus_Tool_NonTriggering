@@ -10,7 +10,7 @@ full combined corpus.
 
 ## Scope
 
-This repo covers the 5 boundary versions (311, 313, 314, 36, 37) across the full build-tool x package-manager x architecture combination (120 branches total). Each branch carries only its own version's data inside `Tools non triggering (Synthetic Data)/` -- not all 5 boundary versions bundled together.
+This repo covers the 5 boundary versions (37) across the full build-tool x package-manager x architecture combination (9 branches total). Each branch carries only its own version's data inside `Tools non triggering (Synthetic Data)/` -- not all 5 boundary versions bundled together.
 
 ## Branch naming
 
