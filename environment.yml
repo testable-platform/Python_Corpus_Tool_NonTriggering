@@ -1,20 +1,10 @@
 # conda environment for branch PY-039.
 #
-# conda can create a python=3.7.17 environment from conda-forge, but
-# conda.anaconda.org and repo.anaconda.com are both 403 at the egress
-# proxy of the host this corpus was built on, so no solved lock could
-# be produced here. This file is complete and solves on a machine with
-# access. Run:
-#
-#   conda env create -f environment.yml
-#   conda activate orderlab-py-039
-#   conda list --explicit > conda-lock.txt
-#
-# and commit conda-lock.txt to close the gap.
+# No solved lock exists for this interpreter: conda-forge's newest 3.7 build is 3.7.12 and no channel reachable from the build host carries python=3.7.17.
+# The Anaconda defaults channel is not listed: nothing here needs it.
 name: orderlab-py-039
 channels:
   - conda-forge
-  - defaults
 dependencies:
   - python==3.7.17
   - pip==24.0
