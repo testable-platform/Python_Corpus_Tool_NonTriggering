@@ -1,20 +1,20 @@
 # conda environment for branch PY-016.
 #
-# conda can create a python=3.6.15 environment from conda-forge, but
-# conda.anaconda.org and repo.anaconda.com are both 403 at the egress
-# proxy of the host this corpus was built on, so no solved lock could
-# be produced here. This file is complete and solves on a machine with
-# access. Run:
+# conda-lock.txt is the solved form of this file (linux-64, conda-forge only), generated with
+# micromamba and re-created from the file to verify it:
+#
+#   conda create --name orderlab-py-016 --file conda-lock.txt
+#
+# Regenerate it after editing this file:
 #
 #   conda env create -f environment.yml
-#   conda activate orderlab-py-016
-#   conda list --explicit > conda-lock.txt
+#   conda list --explicit --md5 > conda-lock.txt
 #
-# and commit conda-lock.txt to close the gap.
+# The lock covers conda packages only; the pip-installed tools are pinned by requirements-*.txt.
+# The Anaconda defaults channel is not listed: nothing here needs it.
 name: orderlab-py-016
 channels:
   - conda-forge
-  - defaults
 dependencies:
   - python==3.6.15
   - pip==21.3.1
