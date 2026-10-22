@@ -17,11 +17,11 @@ difference in tool output is attributable to the branch variables alone.
 | Architecture | Microservices |
 | Scenario | 2 - Microservices |
 | Source root | `packages/domain/src` |
-| Branch usable | **no** -- poetry 1. |
+| Branch usable | yes |
 
-> **Build backend.** uv_build 0.12.9 -- MANDATES PEP 621 [project] and requires Python >=3.8. No release has ever admitted 3.7 either, so this backend cannot execute on this branch. Declared, never invoked.
+> **Build backend.** uv_build 0.12.9 -- MANDATES PEP 621 [project] and is kept as the declared backend. poetry installs this project itself from the mirrored [tool.poetry] table, so nothing in this branch's poetry install path calls the backend. The backend is still executable: `uv build`, or pip with Requires-Python bypassed for the build step (PIP_IGNORE_REQUIRES_PYTHON=1), builds the wheel under CPython 3.7.17.
 
-> **Package manager.** poetry 1.5.1 is the last release admitting Python 3.7 (2.4.2 needs >=3.10). Uses the pre-PEP-621 [tool.poetry] table.
+> **Package manager.** poetry 1.5.1 is the last release admitting Python 3.7 (2.4.2 needs >=3.10). Uses the pre-PEP-621 [tool.poetry] table. pyproject.toml carries a mirrored [tool.poetry] table next to the [project] table that uv_build requires, because poetry 1.5.1 does not read PEP 621; full_check.py (Tool Triggering repository) asserts the two agree.
 
 ## Supported tools
 
@@ -92,7 +92,7 @@ that reason.
 | `lizard` 1.24.0 | installed, then crashed | **runs** | `from __future__ import annotations` is legal from 3.7. The pin did not change; the interpreter did |
 | `pydriller` 2.10 | crashed | crashes | walrus operator, 3.8+. Unchanged until 3.8 |
 | setuptools backend | `setup.cfg` only | **PEP 621 `[project]`** | 68.0.0 is post-setuptools-61; 59.6.0 was not |
-| `uv` / `uv_build` | cannot run | cannot run | floor is 3.8. Moving up one minor version did not help |
+| `uv` / `uv_build` | runs | runs | uv cannot download 3.6 or 3.7 (floor 3.8), so the interpreter is supplied and handed to uv with `--python`; uv_build under pip needs Requires-Python bypassed for the build step |
 
 ## Build
 
@@ -101,7 +101,7 @@ python -m pip install 'poetry==1.5.1'
 poetry install
 ```
 
-> **The build backend cannot run on this interpreter.** uv_build 0.12.9 -- MANDATES PEP 621 [project] and requires Python >=3.8. No release has ever admitted 3.7 either, so this backend cannot execute on this branch. Declared, never invoked.
+> poetry installs the project from the mirrored `[tool.poetry]` table, so the build backend is not on its install path; `pyproject.toml` carries both tables and `full_check.py (Tool Triggering repository)` keeps them in step. Verified under CPython 3.7.17: `poetry install` succeeds, the package imports and the test suite passes.
 
 ## Run
 
