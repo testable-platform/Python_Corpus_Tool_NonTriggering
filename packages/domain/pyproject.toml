@@ -5,7 +5,8 @@ build-backend = "setuptools.build_meta"
 
 # Workspace members use setuptools regardless of the branch's own
 # backend: poetry-core 1.0.8 has no workspace concept at all, and
-# uv_build cannot execute on Python 3.6. Holding the members constant
+# uv_build needs a Requires-Python bypass under pip on Python 3.6 and 3.7.
+# Holding the members constant
 # keeps the backend axis a property of the ROOT manifest only, which is
 # what the branch variable is meant to isolate.
 [tool.setuptools]
