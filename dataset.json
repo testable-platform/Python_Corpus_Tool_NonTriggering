@@ -22,9 +22,9 @@
   "toolsWired": 29,
   "toolsActive": 10,
   "toolsDark": 19,
-  "branchFunctional": false,
-  "backendNote": "uv_build 0.12.9 -- MANDATES PEP 621 [project] and requires Python >=3.8. No release has ever admitted 3.7 either, so this backend cannot execute on this branch. Declared, never invoked.",
-  "packageManagerNote": "uv 0.12.9 REFUSES Python 3.7: \"Python 3.7.17 is not supported. Please use Python 3.8 or newer.\" uv 0.0.5, its first release, already declared >=3.8, and `uv python install 3.7` fails because python-build-standalone's floor is 3.8. Moving the family up one minor version did not help and will not until 3.8.",
+  "branchFunctional": true,
+  "backendNote": "uv_build 0.12.9 -- MANDATES PEP 621 [project]. uv runs its built-in uv_build directly (wheel metadata: Generator: uv 0.12.9), so the uv_build package's own Requires-Python >=3.8 does not gate a build for CPython 3.7.17. Verified: `uv build` emits a pure-Python wheel and `uv sync` installs it.",
+  "packageManagerNote": "uv 0.12.9 drives CPython 3.7.17 when the interpreter is handed to it explicitly (`uv lock --python <path>`, `uv sync --python <path>`). What uv cannot do on this family is PROVIDE the interpreter: python-build-standalone's floor is 3.8, so `uv python install 3.7` fails with \"No download found\" and python-preference is `only-system`. Verified by execution under CPython 3.7.17: `uv lock` resolves, `uv sync` installs, the test suite passes.",
   "testRunner": "pytest==7.4.4",
   "plantedFixtures": {
     "duplication": [
@@ -298,6 +298,5 @@
       "why": "pydriller 2.10 declares Requires-Python >=3.5, so pip installs it without complaint. It then fails at import: pydriller/utils/mailmap.py line 72 uses the walrus operator (3.8+), raising SyntaxError: invalid syntax. It failed the same way on the 3.6 family and will keep failing until 3.8 -- unlike lizard, which was a silent-import failure on 3.6 and runs cleanly here. A metadata-only support matrix marks this tool ACTIVE on both families. It is wrong on both.",
       "failureMode": "installs cleanly, then raises SyntaxError at import"
     }
-  ],
-  "nonFunctionalReason": "uv 0.12.9 REFUSES Python 3.7: \"Python 3.7.17 is not supported. Please use Python 3.8 or newer.\" uv 0.0.5, its first release, already declared >=3.8, and `uv python install 3.7` fails because python-build-standalone's floor is 3.8. Moving the family up one minor version did not help and will not until 3.8."
+  ]
 }
