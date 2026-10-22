@@ -4,7 +4,7 @@
 # Interpreter    : CPython 3.7.17
 #
 # setuptools 68.0.0 -- last release admitting Python 3.7. Unlike the 3.6 family's setuptools 59.6.0, this is post-setuptools-61 and reads PEP 621 [project] natively, so the metadata lives in pyproject.toml and setup.cfg carries only the mutmut and pytest sections.
-# uv 0.12.9 REFUSES Python 3.7: "Python 3.7.17 is not supported. Please use Python 3.8 or newer." uv 0.0.5, its first release, already declared >=3.8, and `uv python install 3.7` fails because python-build-standalone's floor is 3.8. Moving the family up one minor version did not help and will not until 3.8.
+# uv 0.12.9 drives CPython 3.7.17 when the interpreter is handed to it explicitly (`uv lock --python <path>`, `uv sync --python <path>`). What uv cannot do on this family is PROVIDE the interpreter: python-build-standalone's floor is 3.8, so `uv python install 3.7` fails with "No download found" and python-preference is `only-system`. Verified by execution under CPython 3.7.17: `uv lock` resolves, `uv sync` installs, the test suite passes.
 
 [build-system]
 requires = ["setuptools==68.0.0", "wheel==0.42.0"]
