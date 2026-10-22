@@ -30,9 +30,9 @@
   "toolsWired": 29,
   "toolsActive": 8,
   "toolsDark": 21,
-  "branchFunctional": false,
-  "backendNote": "uv_build 0.12.9 -- MANDATES PEP 621 [project] and requires Python >=3.8. No release has ever admitted 3.6, so this backend cannot execute on this branch. Declared, never invoked.",
-  "packageManagerNote": "poetry 1.1.15 is the last release admitting Python 3.6 (2.4.2 needs >=3.10). Uses the pre-PEP-621 [tool.poetry] table.",
+  "branchFunctional": true,
+  "backendNote": "uv_build 0.12.9 -- MANDATES PEP 621 [project] and is kept as the declared backend. poetry installs this project itself from the mirrored [tool.poetry] table, so nothing in this branch's poetry install path calls the backend. The backend is still executable: `uv build`, or pip with Requires-Python bypassed for the build step (PIP_IGNORE_REQUIRES_PYTHON=1), builds the wheel under CPython 3.6.15.",
+  "packageManagerNote": "poetry 1.1.15 is the last release admitting Python 3.6 (2.4.2 needs >=3.10). Uses the pre-PEP-621 [tool.poetry] table. pyproject.toml carries a mirrored [tool.poetry] table next to the [project] table that uv_build requires, because poetry 1.1.15 does not read PEP 621; full_check.py (Tool Triggering repository) asserts the two agree.",
   "testRunner": "pytest==7.0.1",
   "plantedFixtures": {
     "duplication": [
@@ -305,6 +305,5 @@
       "why": "pydriller 2.10 declares Requires-Python >=3.5, so pip installs it without complaint. It then fails at import: pydriller/utils/mailmap.py line 72 uses the walrus operator (3.8+), raising SyntaxError: invalid syntax. Its GitPython dependency also resolves silently backwards to 3.1.18. A metadata-only support matrix marks this tool ACTIVE. It is not.",
       "failureMode": "installs cleanly, then raises SyntaxError at import"
     }
-  ],
-  "nonFunctionalReason": "uv_build 0.12.9 -- MANDATES PEP 621 [project] and requires Python >=3.8. No release has ever admitted 3.6, so this backend cannot execute on this branch. Declared, never invoked."
+  ]
 }
