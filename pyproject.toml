@@ -3,20 +3,19 @@
 # Package manager: pip 24.0
 # Interpreter    : CPython 3.7.17
 #
-# uv_build 0.12.9 -- MANDATES PEP 621 [project] and requires Python >=3.8. No release has ever admitted 3.7 either, so this backend cannot execute on this branch. Declared, never invoked.
+# uv_build 0.12.9 -- MANDATES PEP 621 [project]. The uv_build package declares Requires-Python >=3.8, so pip's isolated build environment refuses it on CPython 3.7.17 ("No matching distribution found for uv_build==0.12.9") unless Requires-Python is bypassed for that one step (PIP_IGNORE_REQUIRES_PYTHON=1). uv_build is a native binary behind a thin shim, so once installed it builds the pure-Python wheel for real. Verified under CPython 3.7.17: the wheel builds, the package imports and the test suite passes. uv_build is pinned to ==0.12.9, so pip cannot float to a later release.
 # pip 24.0 is the last release admitting Python 3.7 (26.2.1 needs >=3.10).
 
 [build-system]
-requires = ["uv_build>=0.12.9"]
+requires = ["uv_build==0.12.9"]
 build-backend = "uv_build"
 
 # uv_build MANDATES PEP 621, so unlike the other two backends this
-# branch must carry a [project] table. It also requires Python >=3.8,
-# and no uv_build release has ever admitted 3.7 either -- so nothing
-# below
-# can be executed on this branch by any version of uv. The
-# configuration is complete and correct; it is simply unreachable.
-# See dataset.json -> branchFunctional, and TRAPS-PY36.md.
+# branch must carry a [project] table. The uv_build package declares
+# Requires-Python >=3.8, which pip enforces inside its isolated build
+# environment; with PIP_IGNORE_REQUIRES_PYTHON=1 for the build step alone, uv_build
+# installs and builds the wheel for real. See dataset.json ->
+# branchFunctional.
 [project]
 name = "orderlab"
 version = "1.0.0"

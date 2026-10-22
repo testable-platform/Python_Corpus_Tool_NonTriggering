@@ -17,9 +17,9 @@ difference in tool output is attributable to the branch variables alone.
 | Architecture | Microservices |
 | Scenario | 2 - Microservices |
 | Source root | `packages/domain/src` |
-| Branch usable | **no** -- pip 24. |
+| Branch usable | yes |
 
-> **Build backend.** uv_build 0.12.9 -- MANDATES PEP 621 [project] and requires Python >=3.8. No release has ever admitted 3.7 either, so this backend cannot execute on this branch. Declared, never invoked.
+> **Build backend.** uv_build 0.12.9 -- MANDATES PEP 621 [project]. The uv_build package declares Requires-Python >=3.8, so pip's isolated build environment refuses it on CPython 3.7.17 ("No matching distribution found for uv_build==0.12.9") unless Requires-Python is bypassed for that one step (PIP_IGNORE_REQUIRES_PYTHON=1). uv_build is a native binary behind a thin shim, so once installed it builds the pure-Python wheel for real. Verified under CPython 3.7.17: the wheel builds, the package imports and the test suite passes. uv_build is pinned to ==0.12.9, so pip cannot float to a later release.
 
 > **Package manager.** pip 24.0 is the last release admitting Python 3.7 (26.2.1 needs >=3.10).
 
@@ -92,16 +92,17 @@ that reason.
 | `lizard` 1.24.0 | installed, then crashed | **runs** | `from __future__ import annotations` is legal from 3.7. The pin did not change; the interpreter did |
 | `pydriller` 2.10 | crashed | crashes | walrus operator, 3.8+. Unchanged until 3.8 |
 | setuptools backend | `setup.cfg` only | **PEP 621 `[project]`** | 68.0.0 is post-setuptools-61; 59.6.0 was not |
-| `uv` / `uv_build` | cannot run | cannot run | floor is 3.8. Moving up one minor version did not help |
+| `uv` / `uv_build` | runs | runs | uv cannot download 3.6 or 3.7 (floor 3.8), so the interpreter is supplied and handed to uv with `--python`; uv_build under pip needs Requires-Python bypassed for the build step |
 
 ## Build
 
 ```
 python -m pip install --upgrade 'pip==24.0'
-python -m pip install -e . -r requirements-dev.txt
+python -m pip install -r requirements-runtime.txt -r requirements-dev.txt
+PIP_IGNORE_REQUIRES_PYTHON=1 python -m pip install --no-deps -e .
 ```
 
-> **The build backend cannot run on this interpreter.** uv_build 0.12.9 -- MANDATES PEP 621 [project] and requires Python >=3.8. No release has ever admitted 3.7 either, so this backend cannot execute on this branch. Declared, never invoked.
+> `PIP_IGNORE_REQUIRES_PYTHON=1` is set for the last step only: uv_build declares Requires-Python >=3.8, which pip would otherwise enforce inside its isolated build environment. Everything else installs with Requires-Python enforced. Verified under CPython 3.7.17: the wheel builds, the package imports and the test suite passes.
 
 ## Run
 
