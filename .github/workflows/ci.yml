@@ -49,7 +49,7 @@ jobs:
         run: |
           python3.6 -m venv .venv
           .venv/bin/python -m pip install --upgrade "pip==21.3.1"
-          .venv/bin/python -m pip install -r requirements-runtime.txt -r requirements-dev.txt && .venv/bin/python -m pip install -e .
+          .venv/bin/python -m pip install -r requirements-runtime.txt -r requirements-dev.txt && PIP_IGNORE_REQUIRES_PYTHON=1 .venv/bin/python -m pip install --no-deps -e .
 
       - name: Install opengrep and Trivy
         run: |

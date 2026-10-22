@@ -17,9 +17,9 @@ difference in tool output is attributable to the branch variables alone.
 | Architecture | Microservices |
 | Scenario | 2 - Microservices |
 | Source root | `packages/domain/src` |
-| Branch usable | **no** -- pip 21. |
+| Branch usable | yes |
 
-> **Build backend.** uv_build 0.12.9 -- MANDATES PEP 621 [project] and requires Python >=3.8. No release has ever admitted 3.6, so this backend cannot execute on this branch. Declared, never invoked.
+> **Build backend.** uv_build 0.12.9 -- MANDATES PEP 621 [project]. The uv_build package declares Requires-Python >=3.8, so pip's isolated build environment refuses it on CPython 3.6.15 ("No matching distribution found for uv_build==0.12.9") unless Requires-Python is bypassed for that one step (PIP_IGNORE_REQUIRES_PYTHON=1). uv_build is a native binary behind a thin shim, so once installed it builds the pure-Python wheel for real. Verified under CPython 3.6.15: the wheel builds, the package imports and the test suite passes. uv_build is pinned to ==0.12.9, so pip cannot float to a later release.
 
 > **Package manager.** pip 21.3.1 is the last release admitting Python 3.6 (26.2.1 needs >=3.10).
 
@@ -89,10 +89,11 @@ that reason.
 
 ```
 python -m pip install --upgrade 'pip==21.3.1'
-python -m pip install -e . -r requirements-dev.txt
+python -m pip install -r requirements-runtime.txt -r requirements-dev.txt
+PIP_IGNORE_REQUIRES_PYTHON=1 python -m pip install --no-deps -e .
 ```
 
-> **The build backend cannot run on this interpreter.** uv_build 0.12.9 -- MANDATES PEP 621 [project] and requires Python >=3.8. No release has ever admitted 3.6, so this backend cannot execute on this branch. Declared, never invoked.
+> `PIP_IGNORE_REQUIRES_PYTHON=1` is set for the last step only: uv_build declares Requires-Python >=3.8, which pip would otherwise enforce inside its isolated build environment. Everything else installs with Requires-Python enforced. Verified under CPython 3.6.15: the wheel builds, the package imports and the test suite passes.
 
 ## Run
 
