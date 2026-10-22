@@ -49,7 +49,7 @@ jobs:
         run: |
           python3.6 -m venv .venv
           .venv/bin/python -m pip install --upgrade "pip==21.3.1"
-          echo "uv cannot drive Python 3.6.15 -- see uv.lock.MISSING" && .venv/bin/python -m pip install -r requirements-runtime.txt -r requirements-dev.txt
+          curl -LsSf https://astral.sh/uv/0.12.9/install.sh | sh && $HOME/.local/bin/uv sync --locked --all-extras --python .venv/bin/python
 
       - name: Install opengrep and Trivy
         run: |

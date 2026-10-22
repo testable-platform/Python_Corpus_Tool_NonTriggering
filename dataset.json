@@ -22,9 +22,9 @@
   "toolsWired": 29,
   "toolsActive": 8,
   "toolsDark": 21,
-  "branchFunctional": false,
-  "backendNote": "uv_build 0.12.9 -- MANDATES PEP 621 [project] and requires Python >=3.8. No release has ever admitted 3.6, so this backend cannot execute on this branch. Declared, never invoked.",
-  "packageManagerNote": "uv 0.12.9 REFUSES Python 3.6: \"Python 3.6.15 is not supported. Please use Python 3.8 or newer.\" uv 0.0.5, its first release, already declared >=3.8, and `uv python install 3.6` fails because python-build-standalone's floor is 3.8. There is no version of uv that can drive this branch.",
+  "branchFunctional": true,
+  "backendNote": "uv_build 0.12.9 -- MANDATES PEP 621 [project]. uv runs its built-in uv_build directly (wheel metadata: Generator: uv 0.12.9), so the uv_build package's own Requires-Python >=3.8 does not gate a build for CPython 3.6.15. Verified: `uv build` emits a pure-Python wheel and `uv sync` installs it.",
+  "packageManagerNote": "uv 0.12.9 drives CPython 3.6.15 when the interpreter is handed to it explicitly (`uv lock --python <path>`, `uv sync --python <path>`). What uv cannot do on this family is PROVIDE the interpreter: python-build-standalone's floor is 3.8, so `uv python install 3.6` fails with \"No download found\" and python-preference is `only-system`. Verified by execution under CPython 3.6.15: `uv lock` resolves, `uv sync` installs, the test suite passes.",
   "testRunner": "pytest==7.0.1",
   "plantedFixtures": {
     "duplication": [
@@ -297,6 +297,5 @@
       "why": "pydriller 2.10 declares Requires-Python >=3.5, so pip installs it without complaint. It then fails at import: pydriller/utils/mailmap.py line 72 uses the walrus operator (3.8+), raising SyntaxError: invalid syntax. Its GitPython dependency also resolves silently backwards to 3.1.18. A metadata-only support matrix marks this tool ACTIVE. It is not.",
       "failureMode": "installs cleanly, then raises SyntaxError at import"
     }
-  ],
-  "nonFunctionalReason": "uv 0.12.9 REFUSES Python 3.6: \"Python 3.6.15 is not supported. Please use Python 3.8 or newer.\" uv 0.0.5, its first release, already declared >=3.8, and `uv python install 3.6` fails because python-build-standalone's floor is 3.8. There is no version of uv that can drive this branch."
+  ]
 }
